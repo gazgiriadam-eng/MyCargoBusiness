@@ -1,0 +1,1177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>My Cargo Business App</title>
+<style>:root {
+  color-scheme: light dark;
+  background-color: var(--background) !important;
+
+  /* Agent-facing contract; keep in sync with SKILL.md. */
+  --background: light-dark(rgb(255 255 255), rgb(24 24 24));
+  --foreground: light-dark(rgb(26 28 31), rgb(255 255 255));
+  --card: color-mix(in oklab, var(--foreground) 5%, transparent);
+  --card-foreground: var(--foreground);
+  --popover: light-dark(rgb(255 255 255), rgb(45 45 45));
+  --popover-foreground: var(--foreground);
+  --primary: light-dark(rgb(51 156 255), rgb(131 195 255));
+  --primary-foreground: light-dark(rgb(255 255 255), rgb(13 13 13));
+  --secondary: light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%));
+  --secondary-foreground: var(--foreground);
+  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --muted-foreground: light-dark(
+    rgb(26 28 31 / 49.4%),
+    rgb(255 255 255 / 49.8%)
+  );
+  --accent: light-dark(rgb(229 242 255), rgb(13 39 63));
+  --accent-foreground: var(--primary);
+  --destructive: light-dark(rgb(226 85 7), rgb(255 133 73));
+  --border: light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%));
+  --input: light-dark(
+    rgb(26 28 31 / 11.8%),
+    color-mix(in oklab, rgb(0 0 0) 10%, transparent)
+  );
+  --ring: light-dark(rgb(51 156 255), rgb(131 195 255 / 76%));
+  --font-size-base: 14px;
+  --viz-series-1: var(--primary);
+  --viz-series-2: light-dark(rgb(243 136 59), rgb(245 154 86));
+  --viz-series-3: light-dark(rgb(93 201 119), rgb(116 213 139));
+  --viz-series-4: light-dark(rgb(235 119 177), rgb(240 143 192));
+  --viz-series-5: light-dark(rgb(155 121 236), rgb(170 145 239));
+  --viz-series-6: light-dark(rgb(58 185 177), rgb(90 203 194));
+
+  /* Internal implementation variables; not part of the agent contract. */
+  --font-sans: -apple-system, system-ui, "Segoe UI", sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+  --font-size-normal: max(11px, var(--font-size-base));
+  --font-size-tooltip: calc(var(--font-size-base) - 1px);
+  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
+  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
+  --font-weight-normal: 430;
+  --font-weight-medium: 500;
+  --line-height-normal: calc(var(--font-size-normal) * 1.5);
+  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
+  --line-height-small: calc(var(--font-size-small) + 4px);
+  --radius: 12.5px;
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.6);
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+  --checkmark-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 17 17'%3E%3Cpath d='M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z'/%3E%3C/svg%3E");
+
+  /* Legacy aliases; not part of the current agent contract. */
+  --viz-bg: transparent;
+  --viz-panel: var(--card);
+  --viz-border: var(--border);
+  --viz-text: var(--foreground);
+  --viz-muted: var(--muted-foreground);
+  --viz-accent: var(--primary);
+  --viz-accent-text: var(--primary-foreground);
+  --viz-accent-bg: var(--accent);
+  --viz-font-size: var(--font-size-base);
+  --viz-warning: var(--destructive);
+  --color-background-primary: var(--background);
+  --color-text-primary: var(--foreground);
+  --color-border-secondary: var(--border);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html > body {
+  margin: 0;
+  padding: 5px;
+  color: var(--foreground);
+  background: transparent !important;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+a {
+  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
+  cursor: pointer;
+  font-weight: var(--viz-font-weight-medium);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 0.5px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-block: 0;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
+b,
+strong,
+th {
+  font-weight: var(--font-weight-medium);
+}
+
+code:not(pre code) {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  word-break: break-word;
+}
+
+#widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: transparent !important;
+}
+
+.card {
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  border-radius: var(--radius-2xl);
+  corner-shape: superellipse(1.5);
+  color: var(--card-foreground);
+  background: var(--card);
+}
+
+#widget > :not(.card) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(
+    20rem,
+    var(--tooltip-available-width, calc(100vw - 10px)),
+    calc(100vw - 10px)
+  );
+  max-height: min(
+    var(--tooltip-available-height, calc(100vh - 10px)),
+    calc(100vh - 10px)
+  );
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--popover-foreground);
+  background: var(--popover);
+  box-shadow: none;
+  font-size: var(--font-size-tooltip);
+  line-height: var(--line-height-tooltip);
+  overflow-wrap: break-word;
+  white-space: normal;
+  pointer-events: none;
+  user-select: none;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
+  gap: 10px;
+}
+
+.viz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viz-stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+.viz-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.viz-badge {
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  color: var(--accent-foreground);
+  background: var(--accent);
+  font-weight: var(--font-weight-medium);
+}
+
+small,
+.text-small,
+.viz-badge {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viz-controls > .form-label {
+  display: grid;
+  min-width: min(100%, 260px);
+  flex: 1 1 280px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 0;
+}
+
+.viz-controls > .form-label > :is(.form-control, .form-range, .form-select) {
+  grid-column: 1 / -1;
+}
+
+.btn,
+.form-check-input,
+.form-control,
+.form-range,
+.form-select {
+  font: inherit;
+}
+
+.btn {
+  appearance: button;
+  display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: var(--cursor-interaction, pointer);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn:is(.btn-block, .viz-tile) {
+  inline-size: 100%;
+}
+
+.btn.viz-tile {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+a.btn {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn-primary {
+  border-color: transparent;
+  color: var(--primary-foreground);
+  background: var(--foreground);
+  background-clip: padding-box;
+}
+
+.btn-primary .text-muted {
+  color: color-mix(in srgb, var(--primary-foreground) 50%, transparent);
+}
+
+.btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  background-clip: padding-box;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.btn-ghost:not(:disabled):hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+[data-lucide] {
+  stroke-width: 1.6;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--foreground);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.form-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-control[type="file"] {
+  padding: 0;
+  overflow: hidden;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control[type="file"]::file-selector-button {
+  min-height: 26px;
+  margin-right: 8px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--input);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: inherit;
+  font: inherit;
+}
+
+.form-control[type="file"]:not(:disabled):hover::file-selector-button {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-control-color[type="color"] {
+  width: 40px;
+  height: 28px;
+  padding: 3px;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control-color[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-control-color[type="color"]::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius-lg) - 4px);
+  corner-shape: superellipse(1.5);
+}
+
+textarea.form-control {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.form-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.form-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 32px 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-select:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-select:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-check {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 1px solid var(--input);
+  color: var(--primary-foreground);
+  background-color: transparent;
+  cursor: var(--cursor-interaction, default);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.form-check:not(.form-switch) .form-check-input[type="checkbox"] {
+  border-color: var(--input);
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background-color: var(--secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input:not(:disabled):not(:checked):hover {
+  background-color: var(--card);
+}
+
+.form-check:not(.form-switch) .form-check-input[type="checkbox"]:checked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type="checkbox"]:checked::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-foreground);
+  content: "";
+  mask: var(--checkmark-image) center / 12px 12px no-repeat;
+}
+
+.form-check-input[type="radio"] {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+}
+
+.form-check-input[type="radio"]:checked {
+  border: 2px solid var(--primary);
+  background:
+    radial-gradient(circle, var(--primary-foreground) 0 2.5px, transparent 3px),
+    var(--primary);
+}
+
+.form-check:not(.form-switch) .form-check-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+}
+
+.form-switch .form-check-input:disabled,
+.form-switch .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-check-label {
+  color: var(--foreground);
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-switch .form-check-input {
+  position: relative;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  box-shadow: none;
+  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+  box-shadow: var(--shadow-sm);
+  content: "";
+  transform: translate(2px, -50%);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input:checked {
+  background: var(--primary);
+}
+
+.form-switch .form-check-input:checked::before {
+  transform: translate(14px, -50%);
+}
+
+.form-switch .form-check-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.form-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 28px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: 0;
+  accent-color: var(--primary);
+  background: linear-gradient(
+      color-mix(in srgb, var(--foreground) 7%, transparent),
+      color-mix(in srgb, var(--foreground) 7%, transparent)
+    )
+    center / 100% 2px no-repeat;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-webkit-slider-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range::-moz-range-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-moz-range-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.btn:not(.btn-primary, .viz-tile):is(
+    [aria-pressed="true"],
+    [aria-selected="true"],
+    .is-selected
+  ) {
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.btn.viz-tile:is([aria-pressed="true"], [aria-selected="true"], .is-selected) {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+#widget > svg {
+  width: 100%;
+}
+
+.text-warning,
+.text-destructive {
+  color: var(--destructive);
+}
+
+html>body{padding:0}</style>
+</head>
+<body>
+<div id="mgb-app">
+  <style>
+    #mgb-app { color:var(--foreground); }
+    #mgb-app .shell { max-width:480px; margin:0 auto; }
+    #mgb-app .appbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; }
+    #mgb-app .brand { display:flex; align-items:center; gap:9px; font-weight:500; }
+    #mgb-app .screen-title { margin:0 0 12px; font-weight:500; }
+    #mgb-app .stack { display:flex; flex-direction:column; gap:10px; }
+    #mgb-app .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    #mgb-app .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    #mgb-app .form-label { display:flex; flex-direction:column; gap:6px; }
+    #mgb-app .wide { grid-column:1 / -1; }
+    #mgb-app .main-action { margin:14px 0; }
+    #mgb-app .quick .btn { min-height:72px; display:flex; flex-direction:column; align-items:flex-start; gap:5px; text-align:left; }
+    #mgb-app .row { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    #mgb-app .item { width:100%; display:grid; grid-template-columns:1fr auto; gap:5px 12px; text-align:left; }
+    #mgb-app .item strong { font-weight:500; }
+    #mgb-app .muted { color:var(--muted-foreground); }
+    #mgb-app .right { text-align:right; }
+    #mgb-app .section { margin-top:16px; }
+    #mgb-app .section-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:9px; }
+    #mgb-app .section-head strong { font-weight:500; }
+    #mgb-app .choice-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    #mgb-app .choice { min-height:76px; display:flex; flex-direction:column; align-items:flex-start; gap:6px; text-align:left; }
+    #mgb-app .stop-row { display:grid; grid-template-columns:auto 1fr auto; align-items:end; gap:8px; }
+    #mgb-app .stop-number { color:var(--muted-foreground); padding-bottom:10px; }
+    #mgb-app .stop-fields { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    #mgb-app .route-stop { display:grid; grid-template-columns:auto 1fr; gap:8px 10px; align-items:start; }
+    #mgb-app .route-stop.is-done { opacity:.58; }
+    #mgb-app .route-stop .route-actions { grid-column:2; display:flex; gap:8px; flex-wrap:wrap; }
+    #mgb-app .route-stop .route-actions .btn { flex:1; }
+    #mgb-app .result { margin-top:14px; }
+    #mgb-app .verdict { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
+    #mgb-app .details { display:grid; grid-template-columns:1fr auto; gap:7px 14px; }
+    #mgb-app .details span { color:var(--muted-foreground); }
+    #mgb-app .details strong { text-align:right; font-weight:500; }
+    #mgb-app .actions { display:flex; gap:10px; margin-top:14px; }
+    #mgb-app .actions .btn { flex:1; }
+    #mgb-app .filters { margin-bottom:12px; }
+    #mgb-app .chart { width:100%; height:auto; display:block; margin-top:8px; }
+    #mgb-app .chart .bar { fill:var(--viz-series-1); }
+    #mgb-app .chart .grid { stroke:var(--border); stroke-width:1; }
+    #mgb-app .chart text { fill:var(--muted-foreground); }
+    #mgb-app .notice { color:var(--muted-foreground); text-align:center; margin-top:10px; }
+    #mgb-app .nav { display:flex; justify-content:space-between; gap:4px; margin-top:20px; }
+    #mgb-app .nav .btn { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
+    #mgb-app .empty { text-align:center; color:var(--muted-foreground); padding:18px 0; }
+    #mgb-app .hidden { display:none; }
+    @media(max-width:380px){
+      #mgb-app .grid2, #mgb-app .form-grid, #mgb-app .choice-grid, #mgb-app .stop-fields { grid-template-columns:1fr; }
+      #mgb-app .wide { grid-column:auto; }
+      #mgb-app .nav .btn span { display:none; }
+    }
+  </style>
+  <section class="shell" aria-label="Приложение Мой грузовой бизнес">
+    <header class="appbar">
+      <div class="brand"><i data-lucide="truck" aria-hidden="true"></i><span>Мой грузовой бизнес</span></div>
+      <button id="settingsButton" class="btn btn-ghost" type="button" aria-label="Настройки"><i data-lucide="settings" aria-hidden="true"></i></button>
+    </header>
+    <main id="view" aria-live="polite"></main>
+    <nav class="nav" aria-label="Основная навигация">
+      <button class="btn nav-button btn-primary" type="button" data-screen="home" aria-label="Главная"><i data-lucide="house" aria-hidden="true"></i><span>Главная</span></button>
+      <button class="btn nav-button btn-ghost" type="button" data-screen="history" aria-label="История"><i data-lucide="history" aria-hidden="true"></i><span>История</span></button>
+      <button class="btn nav-button btn-ghost" type="button" data-screen="clients" aria-label="Клиенты"><i data-lucide="users" aria-hidden="true"></i><span>Клиенты</span></button>
+      <button class="btn nav-button btn-ghost" type="button" data-screen="analytics" aria-label="Аналитика"><i data-lucide="chart-no-axes-combined" aria-hidden="true"></i><span>Аналитика</span></button>
+      <button class="btn nav-button btn-ghost" type="button" data-screen="more" aria-label="Ещё"><i data-lucide="more-horizontal" aria-hidden="true"></i><span>Ещё</span></button>
+    </nav>
+  </section>
+  <script>
+    (() => {
+      const root=document.getElementById('mgb-app');
+      const view=root.querySelector('#view');
+      const storageKey='mgb-prototype-v1';
+      const defaults={
+        settings:{gasPrice:34,consumption:18,costKm:13,minHour:900,goodHour:1200,tax:0},
+        clients:[
+          {id:1,name:'Типография',type:'Типография',loading:'Москва',loadMin:40,unloadMin:7,payment:'Еженедельно'},
+          {id:2,name:'Свадебные декораторы',type:'Декораторы',loading:'Склад декораций',loadMin:150,unloadMin:0,payment:'По факту'},
+          {id:3,name:'Фулфилмент',type:'Фулфилмент',loading:'Склад',loadMin:105,unloadMin:0,payment:'По-разному'}
+        ],
+        orders:[
+          {id:101,date:'2026-07-11',client:'Типография',type:'Типография',route:'Типография → 6 точек',rate:8500,km:92,hours:5.8,cost:1196,profit:7304,score:86,verdict:'БРАТЬ',payment:'Ожидается',loading:'Римского-Корсакова, 11',stops:[
+            {address:'Одинцово, Солнечная, 17',phone:'89257167400',boxes:3,done:false,rank:6,accuracy:'точный дом'},
+            {address:'Южнопортовая, 5/1',phone:'89672882920',boxes:2,done:false,rank:3,accuracy:'точный дом'},
+            {address:'Северный бульвар, 2А',phone:'89859765200',boxes:2,done:false,rank:1,accuracy:'точный дом'},
+            {address:'Обручева, 23, корп. 3',phone:'79771435789',boxes:4,done:false,rank:5,accuracy:'точный дом'},
+            {address:'Зверинецкая, 44/33',phone:'79163577109',boxes:3,done:false,rank:2,accuracy:'точный дом'},
+            {address:'Варшавское шоссе, 1, стр. 6',phone:'89153340713',boxes:4,done:false,rank:4,accuracy:'проверьте строение'}
+          ]},
+          {id:102,date:'2026-07-10',client:'Фулфилмент',type:'Фулфилмент',route:'Южные ворота → Красковская',rate:5000,km:45,hours:3,cost:585,profit:4415,score:88,verdict:'БРАТЬ',payment:'Оплачено'},
+          {id:103,date:'2026-07-08',client:'Разовый клиент',type:'Другой',route:'Москва → Чебоксары',rate:11200,km:670,hours:11,cost:8710,profit:2490,score:54,verdict:'ОТКАЗАТЬСЯ',payment:'Оплачено'}
+        ],
+        service:[{name:'Масло и фильтры',remaining:2600},{name:'Обслуживание ГБО',remaining:1400},{name:'Резина',remaining:17000}]
+      };
+      let state=load();
+      let screen='home';
+      let draft=null;
+      function clone(value){return JSON.parse(JSON.stringify(value));}
+      function load(){try{const saved=localStorage.getItem(storageKey);return saved?JSON.parse(saved):clone(defaults);}catch(error){return clone(defaults);}}
+      function save(){try{localStorage.setItem(storageKey,JSON.stringify(state));}catch(error){}}
+      function esc(value){return String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));}
+      function rub(value){return Math.round(Number(value)||0).toLocaleString('ru-RU')+' ₽';}
+      function icon(name){return '<i data-lucide="'+name+'" aria-hidden="true"></i>';}
+      function refreshIcons(){if(window.lucide) window.lucide.createIcons({attrs:{width:16,height:16}});}
+      function setScreen(next){screen=next;root.querySelectorAll('.nav-button').forEach(button=>{const active=button.dataset.screen===next;button.classList.toggle('btn-primary',active);button.classList.toggle('btn-ghost',!active);});render();}
+      function render(){
+        if(screen==='home') renderHome();
+        if(screen==='new') renderTypeChoice();
+        if(screen==='order') renderOrder();
+        if(screen==='history') renderHistory();
+        if(screen==='clients') renderClients();
+        if(screen==='analytics') renderAnalytics('month');
+        if(screen==='more') renderMore();
+        if(screen==='settings') renderSettings();
+        if(screen==='payments') renderPayments();
+        if(screen==='vehicle') renderVehicle();
+        if(screen==='route') renderRoute();
+        refreshIcons();
+      }
+      function totals(){return state.orders.reduce((a,o)=>({revenue:a.revenue+o.rate,profit:a.profit+o.profit,km:a.km+o.km,hours:a.hours+o.hours}),{revenue:0,profit:0,km:0,hours:0});}
+      function renderHome(){
+        const t=totals();
+        const debt=state.orders.filter(o=>o.payment!=='Оплачено').reduce((sum,o)=>sum+o.rate,0);
+        view.innerHTML='<div class="row"><h2 class="screen-title">Сегодня</h2><span class="viz-badge">11 июля</span></div><div class="viz-grid"><div class="card viz-stat"><span class="text-muted">Чистый остаток</span><span class="viz-stat-value">'+rub(t.profit)+'</span><span class="text-small">по сохранённым заказам</span></div><div class="card viz-stat"><span class="text-muted">Не оплачено</span><span class="viz-stat-value">'+rub(debt)+'</span><span class="text-small">контроль оплат</span></div></div><button id="newOrder" class="btn btn-primary btn-block main-action" type="button">'+icon('plus')+' Новый заказ</button><div class="grid2 quick"><button class="btn" type="button" data-go="route">'+icon('route')+'<strong>Маршрут</strong><span class="text-small">Работа по точкам</span></button><button class="btn" type="button" data-go="payments">'+icon('wallet-cards')+'<strong>Оплаты</strong><span class="text-small">Долги клиентов</span></button><button class="btn" type="button" data-go="vehicle">'+icon('wrench')+'<strong>Машина</strong><span class="text-small">ТО и расходы</span></button></div><div class="section"><div class="section-head"><strong>Последние заказы</strong><button class="btn btn-ghost" type="button" data-go="history">Все</button></div><div class="stack">'+state.orders.slice(0,2).map(orderCard).join('')+'</div></div>';
+        view.querySelector('#newOrder').onclick=()=>setScreen('new');
+        view.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>setScreen(b.dataset.go));
+      }
+      function orderCard(o){return '<button class="btn item" type="button" data-order="'+o.id+'"><strong>'+esc(o.route)+'</strong><strong class="right">'+rub(o.rate)+'</strong><span class="muted text-small">'+esc(o.client)+' · '+o.km+' км · '+o.hours+' ч</span><span class="muted text-small right">'+esc(o.verdict)+'</span></button>';}
+      function renderTypeChoice(){
+        view.innerHTML='<div class="row"><h2 class="screen-title">Новый заказ</h2><button class="btn btn-ghost" type="button" data-back="home">Закрыть</button></div><div class="choice-grid"><button class="btn choice" type="button" data-type="Типография">'+icon('coffee')+'<strong>Типография</strong><span class="text-small">Одна загрузка, 7–15 точек</span></button><button class="btn choice" type="button" data-type="Декораторы">'+icon('moon')+'<strong>Декораторы</strong><span class="text-small">Дневной или ночной рейс</span></button><button class="btn choice" type="button" data-type="Фулфилмент">'+icon('warehouse')+'<strong>Фулфилмент</strong><span class="text-small">Россыпь или палеты</span></button><button class="btn choice" type="button" data-type="Другой">'+icon('package-plus')+'<strong>Другой</strong><span class="text-small">Универсальный заказ</span></button></div>';
+        view.querySelector('[data-back]').onclick=()=>setScreen('home');
+        view.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{const type=b.dataset.type;const client=state.clients.find(c=>c.type===type);draft={type,client:client?.name||'',loading:client?.loading||'',rate:0,km:0,hours:0,commission:0,loadMin:client?.loadMin||20,stops:[{address:'',phone:'',boxes:''}],stopMin:type==='Типография'?7:20,cargo:type==='Фулфилмент'?'Россыпь':'Обычный'};setScreen('order');});
+      }
+      function renderOrder(){
+        const clientOptions=state.clients.map(c=>'<option value="'+esc(c.name)+'" '+(c.name===draft.client?'selected':'')+'>'+esc(c.name)+'</option>').join('');
+        view.innerHTML='<div class="row"><h2 class="screen-title">'+esc(draft.type)+'</h2><button class="btn btn-ghost" id="cancelOrder" type="button">Назад</button></div><div class="card form-grid"><label class="form-label wide">Клиент<select id="client" class="form-select"><option value="">Разовый клиент</option>'+clientOptions+'</select></label><label class="form-label wide">Место загрузки<input id="loading" class="form-control" value="'+esc(draft.loading)+'" placeholder="Введите адрес"></label><label class="form-label">Предложенная цена, ₽<input id="rate" class="form-control" type="number" min="0" value="'+draft.rate+'"></label><label class="form-label">Комиссия, %<input id="commission" class="form-control" type="number" min="0" max="100" value="'+draft.commission+'"></label><label class="form-label">Общий пробег, км<input id="km" class="form-control" type="number" min="0" value="'+draft.km+'"></label><label class="form-label">Общее время, ч<input id="hours" class="form-control" type="number" min="0" step="0.1" value="'+draft.hours+'"></label><label class="form-label">Загрузка, минут<input id="loadMin" class="form-control" type="number" min="0" value="'+draft.loadMin+'"></label><label class="form-label">Выгрузка на точке, минут<input id="stopMin" class="form-control" type="number" min="0" value="'+draft.stopMin+'"></label>'+(draft.type==='Фулфилмент'?'<label class="form-label wide">Груз<select id="cargo" class="form-select"><option>Россыпь</option><option>Палеты</option></select></label>':'')+'</div><div class="section"><div class="section-head"><strong>Точки выгрузки</strong><button id="addStop" class="btn" type="button">'+icon('plus')+' Добавить</button></div><div id="stops" class="stack">'+draft.stops.map((s,i)=>stopRow(s,i)).join('')+'</div></div><button id="calculate" class="btn btn-primary btn-block main-action" type="button">Рассчитать рентабельность</button><div id="calculation"></div>';
+        bindOrder();
+      }
+      function stopRow(value,index){const stop=typeof value==='string'?{address:value,phone:'',boxes:''}:value;return '<div class="stop-row"><span class="stop-number">'+(index+1)+'</span><div class="stop-fields"><label class="form-label wide">Адрес<input class="form-control stop-address" data-index="'+index+'" value="'+esc(stop.address)+'" placeholder="Адрес выгрузки"></label><label class="form-label">Телефон<input class="form-control stop-phone" data-index="'+index+'" value="'+esc(stop.phone)+'" placeholder="Телефон"></label><label class="form-label">Коробок<input class="form-control stop-boxes" data-index="'+index+'" type="number" min="0" value="'+esc(stop.boxes)+'"></label></div><button class="btn btn-ghost remove-stop" type="button" data-index="'+index+'" aria-label="Удалить точку">'+icon('trash-2')+'</button></div>';}
+      function readDraft(){
+        draft.client=view.querySelector('#client').value||'Разовый клиент';draft.loading=view.querySelector('#loading').value;draft.rate=Number(view.querySelector('#rate').value)||0;draft.commission=Number(view.querySelector('#commission').value)||0;draft.km=Number(view.querySelector('#km').value)||0;draft.hours=Number(view.querySelector('#hours').value)||0;draft.loadMin=Number(view.querySelector('#loadMin').value)||0;draft.stopMin=Number(view.querySelector('#stopMin').value)||0;draft.stops=[...view.querySelectorAll('.stop-address')].map((input,index)=>({address:input.value,phone:view.querySelectorAll('.stop-phone')[index].value,boxes:Number(view.querySelectorAll('.stop-boxes')[index].value)||0,done:false,rank:index+1,accuracy:'ожидает проверки'}));const cargo=view.querySelector('#cargo');if(cargo)draft.cargo=cargo.value;
+      }
+      function bindOrder(){
+        view.querySelector('#cancelOrder').onclick=()=>setScreen('new');
+        view.querySelector('#addStop').onclick=()=>{readDraft();draft.stops.push({address:'',phone:'',boxes:'',done:false});renderOrder();};
+        view.querySelectorAll('.remove-stop').forEach(b=>b.onclick=()=>{readDraft();if(draft.stops.length>1)draft.stops.splice(Number(b.dataset.index),1);renderOrder();});
+        view.querySelector('#calculate').onclick=calculateOrder;
+      }
+      function calculateOrder(){
+        readDraft();const afterCommission=draft.rate*(1-draft.commission/100);const cost=draft.km*state.settings.costKm;const profit=afterCommission-cost;const hourly=draft.hours>0?profit/draft.hours:0;const perKm=draft.km>0?profit/draft.km:0;let score=100;if(hourly<state.settings.goodHour)score-=18;if(hourly<state.settings.minHour)score-=25;score-=Math.max(0,draft.stops.length-1);score-=draft.commission>=30?12:draft.commission>=20?7:draft.commission>=10?3:0;score=Math.max(0,Math.min(100,Math.round(score)));const verdict=hourly>=state.settings.goodHour?'БРАТЬ':hourly>=state.settings.minHour?'ТОРГОВАТЬСЯ':'ОТКАЗАТЬСЯ';const minimum=Math.ceil((cost+state.settings.goodHour*draft.hours)/(1-draft.commission/100)/100)*100;draft.result={cost,profit,hourly,perKm,score,verdict,minimum};view.querySelector('#calculation').innerHTML='<div class="card result"><div class="verdict"><span class="viz-badge">'+verdict+'</span><strong>'+score+'/100</strong></div><div class="details"><span>Чистый остаток</span><strong>'+rub(profit)+'</strong><span>Прибыль в час</span><strong>'+rub(hourly)+'</strong><span>Прибыль на км</span><strong>'+rub(perKm)+'</strong><span>Расходы машины</span><strong>'+rub(cost)+'</strong><span>Рекомендуемая цена</span><strong>'+rub(minimum)+'</strong></div><button id="saveOrder" class="btn btn-primary btn-block main-action" type="button">Сохранить заказ</button></div>';
+        view.querySelector('#saveOrder').onclick=saveOrder;
+        refreshIcons();
+      }
+      function saveOrder(){
+        const r=draft.result;const stops=draft.stops.filter(stop=>stop.address);state.orders.unshift({id:Date.now(),date:new Date().toISOString().slice(0,10),client:draft.client,type:draft.type,route:(draft.loading||'Загрузка')+' → '+(stops.length>1?stops.length+' точек':stops[0]?.address||'Выгрузка'),rate:draft.rate,km:draft.km,hours:draft.hours,cost:r.cost,profit:r.profit,score:r.score,verdict:r.verdict,payment:'Ожидается',loading:draft.loading,stops});save();draft=null;setScreen('history');
+      }
+      function renderHistory(){
+        view.innerHTML='<div class="row"><h2 class="screen-title">История</h2><button id="historyNew" class="btn btn-primary" type="button">'+icon('plus')+' Новый</button></div><div class="stack">'+(state.orders.length?state.orders.map(orderCard).join(''):'<div class="empty">Заказов пока нет</div>')+'</div><div id="orderDetail"></div>';
+        view.querySelector('#historyNew').onclick=()=>setScreen('new');
+        view.querySelectorAll('[data-order]').forEach(b=>b.onclick=()=>showOrder(Number(b.dataset.order)));
+      }
+      function showOrder(id){const o=state.orders.find(x=>x.id===id);if(!o)return;view.querySelector('#orderDetail').innerHTML='<div class="card section"><div class="verdict"><strong>'+esc(o.route)+'</strong><span class="viz-badge">'+esc(o.verdict)+'</span></div><div class="details"><span>Клиент</span><strong>'+esc(o.client)+'</strong><span>Ставка</span><strong>'+rub(o.rate)+'</strong><span>Чистый остаток</span><strong>'+rub(o.profit)+'</strong><span>Оплата</span><strong>'+esc(o.payment)+'</strong></div><div class="actions"><button id="togglePaid" class="btn" type="button">'+(o.payment==='Оплачено'?'Вернуть в долг':'Отметить оплату')+'</button><button id="deleteOrder" class="btn" type="button">Удалить</button></div></div>';view.querySelector('#togglePaid').onclick=()=>{o.payment=o.payment==='Оплачено'?'Ожидается':'Оплачено';save();renderHistory();showOrder(id);};view.querySelector('#deleteOrder').onclick=()=>{state.orders=state.orders.filter(x=>x.id!==id);save();renderHistory();};}
+      function renderClients(){
+        view.innerHTML='<div class="row"><h2 class="screen-title">Клиенты</h2><button id="addClient" class="btn btn-primary" type="button">'+icon('plus')+' Добавить</button></div><div class="stack">'+state.clients.map(c=>'<button class="btn item" type="button"><strong>'+esc(c.name)+'</strong><span class="viz-badge">'+esc(c.type)+'</span><span class="muted text-small">'+esc(c.loading)+'</span><span class="muted text-small right">'+esc(c.payment)+'</span></button>').join('')+'</div><div id="clientForm"></div>';
+        view.querySelector('#addClient').onclick=()=>{view.querySelector('#clientForm').innerHTML='<div class="card section form-grid"><label class="form-label wide">Название<input id="clientName" class="form-control"></label><label class="form-label">Тип<select id="clientType" class="form-select"><option>Типография</option><option>Декораторы</option><option>Фулфилмент</option><option>Другой</option></select></label><label class="form-label">Условия оплаты<select id="clientPayment" class="form-select"><option>По факту</option><option>Еженедельно</option><option>Ежемесячно</option><option>По-разному</option></select></label><label class="form-label wide">Место загрузки<input id="clientLoading" class="form-control"></label><button id="saveClient" class="btn btn-primary wide" type="button">Сохранить клиента</button></div>';view.querySelector('#saveClient').onclick=()=>{const name=view.querySelector('#clientName').value.trim();if(!name)return;state.clients.push({id:Date.now(),name,type:view.querySelector('#clientType').value,loading:view.querySelector('#clientLoading').value,loadMin:20,unloadMin:10,payment:view.querySelector('#clientPayment').value});save();renderClients();};};
+      }
+      function renderAnalytics(period){
+        const t=totals();const avg=state.orders.length?t.revenue/state.orders.length:0;const max=Math.max(1,...state.orders.map(o=>o.profit));
+        view.innerHTML='<div class="row"><h2 class="screen-title">Аналитика</h2><span class="viz-badge">Все данные</span></div><div class="viz-grid"><div class="card viz-stat"><span class="text-muted">Выручка</span><span class="viz-stat-value">'+rub(t.revenue)+'</span></div><div class="card viz-stat"><span class="text-muted">Чистый остаток</span><span class="viz-stat-value">'+rub(t.profit)+'</span></div><div class="card viz-stat"><span class="text-muted">Средний чек</span><span class="viz-stat-value">'+rub(avg)+'</span></div></div><div class="section"><div class="section-head"><strong>Прибыль по заказам</strong><span class="muted text-small">₽</span></div><svg class="chart" viewBox="0 0 400 170" role="img" aria-label="Прибыль по последним заказам"><line class="grid" x1="28" y1="140" x2="390" y2="140"></line>'+state.orders.slice(0,6).reverse().map((o,i)=>{const h=Math.max(2,100*o.profit/max);const x=40+i*55;return '<rect class="bar" x="'+x+'" y="'+(140-h)+'" width="34" height="'+h+'" rx="3"><title>'+esc(o.client)+': '+rub(o.profit)+'</title></rect><text class="text-small" x="'+(x+17)+'" y="158" text-anchor="middle">'+(i+1)+'</text>';}).join('')+'</svg></div><div class="card details section"><span>Общий пробег</span><strong>'+t.km.toLocaleString('ru-RU')+' км</strong><span>Рабочее время</span><strong>'+t.hours.toLocaleString('ru-RU')+' ч</strong><span>Прибыль на км</span><strong>'+rub(t.km?t.profit/t.km:0)+'</strong><span>Прибыль в час</span><strong>'+rub(t.hours?t.profit/t.hours:0)+'</strong></div>';
+      }
+      function renderMore(){view.innerHTML='<h2 class="screen-title">Ещё</h2><div class="stack"><button class="btn item" type="button" data-go="payments"><strong>Оплаты и задолженность</strong>'+icon('chevron-right')+'<span class="muted text-small">Кто и сколько должен</span></button><button class="btn item" type="button" data-go="vehicle"><strong>Машина и ТО</strong>'+icon('chevron-right')+'<span class="muted text-small">Заправки, ремонт, обслуживание</span></button><button class="btn item" type="button" data-go="settings"><strong>Настройки расчёта</strong>'+icon('chevron-right')+'<span class="muted text-small">Газ, себестоимость, границы решений</span></button></div>';view.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>setScreen(b.dataset.go));}
+      function renderPayments(){const unpaid=state.orders.filter(o=>o.payment!=='Оплачено');view.innerHTML='<div class="row"><h2 class="screen-title">Оплаты</h2><button class="btn btn-ghost" type="button" data-back="more">Назад</button></div><div class="viz-grid"><div class="card viz-stat"><span class="text-muted">Ожидается</span><span class="viz-stat-value">'+rub(unpaid.reduce((s,o)=>s+o.rate,0))+'</span></div><div class="card viz-stat"><span class="text-muted">Заказов</span><span class="viz-stat-value">'+unpaid.length+'</span></div></div><div class="stack section">'+(unpaid.length?unpaid.map(orderCard).join(''):'<div class="empty">Задолженности нет</div>')+'</div>';view.querySelector('[data-back]').onclick=()=>setScreen('more');view.querySelectorAll('[data-order]').forEach(b=>b.onclick=()=>{const o=state.orders.find(x=>x.id===Number(b.dataset.order));o.payment='Оплачено';save();renderPayments();});}
+      function renderRoute(){
+        const order=state.orders.find(item=>Array.isArray(item.stops)&&item.stops.length);
+        if(!order){view.innerHTML='<div class="row"><h2 class="screen-title">Маршрут</h2><button class="btn btn-ghost" type="button" data-back="home">Назад</button></div><div class="empty">Сначала создайте заказ с адресами</div>';view.querySelector('[data-back]').onclick=()=>setScreen('home');return;}
+        const done=order.stops.filter(stop=>stop.done).length;
+        const nextIndex=order.stops.findIndex(stop=>!stop.done);
+        const checked=order.routeChecked===true;view.innerHTML='<div class="row"><h2 class="screen-title">Маршрут</h2><button class="btn btn-ghost" type="button" data-back="home">Назад</button></div><div class="card details"><span>Загрузка</span><strong>'+esc(order.loading||'Не указана')+'</strong><span>Точек выполнено</span><strong>'+done+' из '+order.stops.length+'</strong><span>Пробег по плану</span><strong>'+order.km+' км</strong><span>Время по плану</span><strong>'+order.hours+' ч</strong><span>Порядок точек</span><strong>'+(checked?'рассчитан':'исходный')+'</strong></div><button id="calculateSequence" class="btn '+(checked?'':'btn-primary')+' btn-block main-action" type="button">'+icon(checked?'check':'wand-sparkles')+' '+(checked?'Адреса проверены, порядок рассчитан':'Проверить адреса и расставить точки')+'</button><div class="stack section">'+order.stops.map((stop,index)=>routeStop(stop,index,index===nextIndex)).join('')+'</div>'+(done===order.stops.length?'<div class="card section"><strong>Все доставки выполнены</strong><div class="notice text-small">Фактические данные можно внести в историю заказа</div></div>':'');
+        view.querySelector('[data-back]').onclick=()=>setScreen('home');
+        view.querySelector('#calculateSequence').onclick=()=>{const button=view.querySelector('#calculateSequence');if(window.AndroidBridge){button.textContent='Проверяем адреса и рассчитываем...';AndroidBridge.optimizeRoute(JSON.stringify({loading:order.loading,stops:order.stops.map((stop,index)=>({index,address:stop.address}))}));}else{order.stops.sort((a,b)=>(a.rank??999)-(b.rank??999));order.routeChecked=true;save();renderRoute();}};
+        view.querySelectorAll('.copy-address').forEach(button=>button.onclick=async()=>{const address=button.dataset.address;try{await navigator.clipboard.writeText(address);button.textContent='Адрес скопирован';}catch(error){button.textContent='Скопируйте адрес вручную';}});
+        view.querySelectorAll('.done-stop').forEach(button=>button.onclick=()=>{const index=Number(button.dataset.index);order.stops[index].done=!order.stops[index].done;save();renderRoute();});
+        view.querySelectorAll('.move-stop').forEach(button=>button.onclick=()=>{const index=Number(button.dataset.index);const delta=Number(button.dataset.delta);const target=index+delta;if(target<0||target>=order.stops.length)return;const moved=order.stops.splice(index,1)[0];order.stops.splice(target,0,moved);order.routeChecked=false;save();renderRoute();});
+      }
+      function routeStop(stop,index,isNext){
+        const geo='geo:0,0?q='+encodeURIComponent(stop.address);const accuracy=stop.accuracy||'ожидает проверки';return '<div class="card route-stop '+(stop.done?'is-done':'')+'"><span class="viz-badge">'+(stop.done?'✓':index+1)+'</span><div><strong>'+esc(stop.address)+'</strong><div class="muted text-small">'+(stop.boxes?stop.boxes+' кор. · ':'')+(isNext?'следующая точка':stop.done?'доставлено':'ожидает')+' · '+esc(accuracy)+'</div></div><div class="route-actions"><button class="btn move-stop" data-index="'+index+'" data-delta="-1" type="button" aria-label="Поднять точку">'+icon('arrow-up')+'</button><button class="btn move-stop" data-index="'+index+'" data-delta="1" type="button" aria-label="Опустить точку">'+icon('arrow-down')+'</button>'+(stop.phone?'<a class="btn" href="tel:'+esc(stop.phone)+'">'+icon('phone')+' Позвонить</a>':'')+'<a class="btn navigator-link" href="'+esc(geo)+'">'+icon('navigation')+' Навигатор</a><button class="btn copy-address" data-address="'+esc(stop.address)+'" type="button">'+icon('copy')+' Копировать</button><button class="btn '+(stop.done?'':'btn-primary')+' done-stop" data-index="'+index+'" type="button">'+(stop.done?'Вернуть':'Доставлено')+'</button></div></div>';
+      }
+      function renderVehicle(){view.innerHTML='<div class="row"><h2 class="screen-title">Машина</h2><button class="btn btn-ghost" type="button" data-back="more">Назад</button></div><div class="card details"><span>Автомобиль</span><strong>Газель Бизнес</strong><span>Двигатель</span><strong>УМЗ-4216</strong><span>Топливо</span><strong>Газ</strong><span>Себестоимость</span><strong>'+rub(state.settings.costKm)+'/км</strong></div><div class="section"><div class="section-head"><strong>Обслуживание</strong></div><div class="stack">'+state.service.map(s=>'<div class="btn item"><strong>'+esc(s.name)+'</strong><span class="viz-badge">'+s.remaining.toLocaleString('ru-RU')+' км</span><span class="muted text-small">до следующего обслуживания</span></div>').join('')+'</div></div>';view.querySelector('[data-back]').onclick=()=>setScreen('more');}
+      function renderSettings(){const s=state.settings;view.innerHTML='<div class="row"><h2 class="screen-title">Настройки</h2><button class="btn btn-ghost" type="button" data-back="more">Назад</button></div><div class="section"><div class="section-head"><strong>Подключение сервисов</strong></div><div class="card form-grid"><label class="form-label wide">Ключ DaData<input id="dadataKey" class="form-control" type="password" autocomplete="off" placeholder="Вставьте ключ"></label><label class="form-label wide">Ключ openrouteservice<input id="orsKey" class="form-control" type="password" autocomplete="off" placeholder="Вставьте ключ"></label><button id="saveKeys" class="btn btn-primary wide" type="button">Сохранить и проверить</button></div><div id="servicesNotice" class="notice text-small">Ключи хранятся только на телефоне</div></div><div class="section"><div class="section-head"><strong>Расчёт рентабельности</strong></div><div class="card form-grid"><label class="form-label">Цена газа, ₽/л<input id="gasPrice" class="form-control" type="number" value="'+s.gasPrice+'"></label><label class="form-label">Расход, л/100 км<input id="consumption" class="form-control" type="number" value="'+s.consumption+'"></label><label class="form-label">Полная стоимость, ₽/км<input id="costKm" class="form-control" type="number" value="'+s.costKm+'"></label><label class="form-label">Налог, %<input id="tax" class="form-control" type="number" value="'+s.tax+'"></label><label class="form-label">Торговаться от, ₽/ч<input id="minHour" class="form-control" type="number" value="'+s.minHour+'"></label><label class="form-label">Брать от, ₽/ч<input id="goodHour" class="form-control" type="number" value="'+s.goodHour+'"></label><button id="saveSettings" class="btn btn-primary wide" type="button">Сохранить настройки</button><button id="resetData" class="btn wide" type="button">Вернуть демонстрационные данные</button></div></div><div id="settingsNotice" class="notice text-small"></div>';view.querySelector('[data-back]').onclick=()=>setScreen('more');view.querySelector('#saveKeys').onclick=()=>{const dadata=view.querySelector('#dadataKey').value;const ors=view.querySelector('#orsKey').value;if(window.AndroidBridge){view.querySelector('#servicesNotice').textContent='Проверяем подключение...';AndroidBridge.saveAndTestKeys(dadata,ors);}else{view.querySelector('#servicesNotice').textContent='Проверка доступна в Android-версии';}};view.querySelector('#saveSettings').onclick=()=>{['gasPrice','consumption','costKm','tax','minHour','goodHour'].forEach(k=>state.settings[k]=Number(view.querySelector('#'+k).value)||0);save();view.querySelector('#settingsNotice').textContent='Настройки сохранены';};view.querySelector('#resetData').onclick=()=>{state=clone(defaults);save();renderSettings();};}
+      window.mgbNativeResult=(type,payload)=>{let data;try{data=JSON.parse(payload);}catch(error){data={ok:false,message:'Некорректный ответ'};}if(type==='services'){const notice=root.querySelector('#servicesNotice');if(notice)notice.textContent=data.message||'Проверка завершена';}if(type==='route'){const order=state.orders.find(item=>Array.isArray(item.stops)&&item.stops.length);if(!order)return;if(!data.ok){const button=root.querySelector('#calculateSequence');if(button)button.textContent=data.message||'Не удалось рассчитать';return;}const byIndex=new Map(order.stops.map((stop,index)=>[index,stop]));order.stops=data.order.map(item=>{const stop=byIndex.get(item.index);stop.accuracy=item.accuracy||'адрес подтверждён';stop.normalized=item.normalized||stop.address;return stop;});order.routeChecked=true;if(data.distanceKm)order.km=data.distanceKm;if(data.durationHours)order.hours=data.durationHours;save();renderRoute();}};
+      root.querySelectorAll('.nav-button').forEach(button=>button.onclick=()=>setScreen(button.dataset.screen));
+      root.querySelector('#settingsButton').onclick=()=>setScreen('settings');
+      render();
+    })();
+  </script>
+</div>
+
+<script src="https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js"></script>
+<script src="https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js"></script>
+<script>
+(() => {
+  if (window.FloatingUIDOM == null) {
+    return;
+  }
+  const { autoUpdate, computePosition, flip, offset, shift, size } =
+    window.FloatingUIDOM;
+  const tooltipPlacements = new Set(["top", "right", "bottom", "left"]);
+  const tooltipId = `codex-visualization-tooltip-${
+    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
+  }`;
+  const tooltipGap = 5;
+  const hoverDelay = 700;
+  const skipDelay = 300;
+  let activeTrigger = null;
+  let pendingTrigger = null;
+  let tooltip = null;
+  let openTimeout = null;
+  let autoUpdateCleanup = null;
+  let positionRequest = 0;
+  let skipDelayUntil = 0;
+
+  const getTrigger = (target) =>
+    target?.nodeType === Node.ELEMENT_NODE
+      ? target.closest("[data-tooltip]")
+      : null;
+  const containsTarget = (trigger, target) =>
+    target?.nodeType != null && trigger.contains(target);
+  const getContent = (trigger) =>
+    trigger.getAttribute("data-tooltip")?.trim() ?? "";
+  const getPlacement = (trigger) => {
+    const placement = trigger.getAttribute("data-tooltip-placement");
+    return tooltipPlacements.has(placement) ? placement : "top";
+  };
+  const getTooltip = () => {
+    if (tooltip == null) {
+      tooltip = document.createElement("div");
+      tooltip.id = tooltipId;
+      tooltip.className = "tooltip";
+      tooltip.setAttribute("role", "tooltip");
+    }
+    return tooltip;
+  };
+  const setDescribedBy = (trigger, described) => {
+    const ids = new Set(
+      (trigger.getAttribute("aria-describedby") ?? "")
+        .split(/\s+/)
+        .filter(Boolean),
+    );
+    if (described) {
+      ids.add(tooltipId);
+    } else {
+      ids.delete(tooltipId);
+    }
+    if (ids.size === 0) {
+      trigger.removeAttribute("aria-describedby");
+    } else {
+      trigger.setAttribute("aria-describedby", [...ids].join(" "));
+    }
+  };
+  const clearOpenTimeout = () => {
+    if (openTimeout != null) {
+      window.clearTimeout(openTimeout);
+      openTimeout = null;
+    }
+    pendingTrigger = null;
+  };
+  const closeTooltip = (activateSkipDelay = true) => {
+    clearOpenTimeout();
+    positionRequest += 1;
+    autoUpdateCleanup?.();
+    autoUpdateCleanup = null;
+    if (activeTrigger == null) {
+      return;
+    }
+    setDescribedBy(activeTrigger, false);
+    activeTrigger = null;
+    tooltip?.remove();
+    if (activateSkipDelay) {
+      skipDelayUntil = Date.now() + skipDelay;
+    }
+  };
+  const updatePosition = (trigger, floating) => {
+    const request = ++positionRequest;
+    void computePosition(trigger, floating, {
+      middleware: [
+        offset(tooltipGap),
+        flip({ padding: tooltipGap }),
+        shift({ padding: tooltipGap }),
+        size({
+          padding: tooltipGap,
+          apply({ availableHeight, availableWidth, elements }) {
+            elements.floating.style.setProperty(
+              "--tooltip-available-width",
+              `${Math.max(0, availableWidth)}px`,
+            );
+            elements.floating.style.setProperty(
+              "--tooltip-available-height",
+              `${Math.max(0, availableHeight)}px`,
+            );
+          },
+        }),
+      ],
+      placement: getPlacement(trigger),
+      strategy: "fixed",
+    })
+      .then(({ x, y }) => {
+        if (activeTrigger !== trigger || request !== positionRequest) {
+          return;
+        }
+        const scale = window.devicePixelRatio || 1;
+        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
+        floating.style.visibility = "visible";
+      })
+      .catch(() => {
+        if (activeTrigger === trigger && request === positionRequest) {
+          closeTooltip(false);
+        }
+      });
+  };
+  const openTooltip = (trigger) => {
+    const content = getContent(trigger);
+    if (!trigger.isConnected || content.length === 0) {
+      return;
+    }
+    clearOpenTimeout();
+    if (activeTrigger === trigger) {
+      return;
+    }
+    closeTooltip();
+    const floating = getTooltip();
+    floating.textContent = content;
+    floating.style.visibility = "hidden";
+    floating.style.transform = "translate(0, 0)";
+    document.body.appendChild(floating);
+    activeTrigger = trigger;
+    setDescribedBy(trigger, true);
+    autoUpdateCleanup = autoUpdate(trigger, floating, () => {
+      updatePosition(trigger, floating);
+    });
+  };
+  const requestOpen = (trigger, immediate = false) => {
+    if (
+      getContent(trigger).length === 0 ||
+      activeTrigger === trigger ||
+      pendingTrigger === trigger
+    ) {
+      return;
+    }
+    clearOpenTimeout();
+    pendingTrigger = trigger;
+    const delay =
+      immediate || activeTrigger != null || Date.now() < skipDelayUntil
+        ? 0
+        : hoverDelay;
+    if (delay === 0) {
+      openTooltip(trigger);
+      return;
+    }
+    openTimeout = window.setTimeout(() => {
+      openTimeout = null;
+      pendingTrigger = null;
+      openTooltip(trigger);
+    }, delay);
+  };
+  const handlePointerOpen = (event) => {
+    if (event.pointerType === "touch") {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    requestOpen(trigger);
+  };
+  const handleLeave = (event) => {
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handleFocusIn = (event) => {
+    const trigger = getTrigger(event.target);
+    if (trigger?.matches(":focus-visible")) {
+      requestOpen(trigger, true);
+    }
+  };
+  const handleKeyDown = (event) => {
+    if (event.key === "Escape") {
+      closeTooltip();
+    }
+  };
+  const handleContextMenu = (event) => {
+    const trigger = getTrigger(event.target);
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const destroy = () => {
+    closeTooltip(false);
+    document.removeEventListener("pointerover", handlePointerOpen);
+    document.removeEventListener("pointerout", handleLeave);
+    document.removeEventListener("focusin", handleFocusIn);
+    document.removeEventListener("focusout", handleLeave);
+    document.removeEventListener("keydown", handleKeyDown);
+    document.removeEventListener("contextmenu", handleContextMenu);
+    tooltip = null;
+  };
+
+  document.addEventListener("pointerover", handlePointerOpen);
+  document.addEventListener("pointerout", handleLeave);
+  document.addEventListener("focusin", handleFocusIn);
+  document.addEventListener("focusout", handleLeave);
+  document.addEventListener("keydown", handleKeyDown);
+  document.addEventListener("contextmenu", handleContextMenu);
+  window.addEventListener("pagehide", destroy, { once: true });
+})();
+</script>
+<script id="codex-visualization-lucide" async src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js"></script>
+<script>
+(() => {
+  const initialize = () => {
+    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
+  };
+  if (globalThis.lucide != null) {
+    initialize();
+    return;
+  }
+  document
+    .getElementById("codex-visualization-lucide")
+    ?.addEventListener("load", initialize, { once: true });
+})();
+</script>
+
+</body>
+</html>
