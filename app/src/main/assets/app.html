@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>My Cargo Business App</title>
@@ -734,23 +734,26 @@ svg {
   color: var(--destructive);
 }
 
-html>body{padding:0}</style>
+html,body{width:100%;min-height:100%;overscroll-behavior:none}
+html>body{padding:0;background:var(--background)!important}</style>
 </head>
 <body>
 <div id="mgb-app">
   <style>
-    #mgb-app { color:var(--foreground); }
-    #mgb-app .shell { max-width:480px; margin:0 auto; }
-    #mgb-app .appbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; }
+    #mgb-app { min-height:100vh; min-height:100dvh; color:var(--foreground); background:var(--background); }
+    #mgb-app .shell { width:100%; max-width:480px; min-height:100vh; min-height:100dvh; margin:0 auto; }
+    #mgb-app .appbar { position:sticky; top:0; z-index:20; display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:58px; margin:0; padding:calc(8px + env(safe-area-inset-top)) 16px 8px; border-bottom:1px solid var(--border); background:color-mix(in srgb,var(--background) 94%,transparent); backdrop-filter:blur(14px); }
     #mgb-app .brand { display:flex; align-items:center; gap:9px; font-weight:500; }
-    #mgb-app .screen-title { margin:0 0 12px; font-weight:500; }
+    #mgb-app #view { width:100%; min-height:0; padding:16px 16px calc(92px + env(safe-area-inset-bottom)); }
+    #mgb-app .screen-title { margin:0; font-weight:500; }
     #mgb-app .stack { display:flex; flex-direction:column; gap:10px; }
     #mgb-app .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
     #mgb-app .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
     #mgb-app .form-label { display:flex; flex-direction:column; gap:6px; }
     #mgb-app .wide { grid-column:1 / -1; }
     #mgb-app .main-action { margin:14px 0; }
-    #mgb-app .quick .btn { min-height:72px; display:flex; flex-direction:column; align-items:flex-start; gap:5px; text-align:left; }
+    #mgb-app .quick { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    #mgb-app .quick .btn { min-width:0; min-height:82px; display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-start; gap:5px; padding:10px; text-align:left; }
     #mgb-app .row { display:flex; align-items:center; justify-content:space-between; gap:10px; }
     #mgb-app .item { width:100%; display:grid; grid-template-columns:1fr auto; gap:5px 12px; text-align:left; }
     #mgb-app .item strong { font-weight:500; }
@@ -781,14 +784,17 @@ html>body{padding:0}</style>
     #mgb-app .chart .grid { stroke:var(--border); stroke-width:1; }
     #mgb-app .chart text { fill:var(--muted-foreground); }
     #mgb-app .notice { color:var(--muted-foreground); text-align:center; margin-top:10px; }
-    #mgb-app .nav { display:flex; justify-content:space-between; gap:4px; margin-top:20px; }
-    #mgb-app .nav .btn { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
+    #mgb-app .nav { position:fixed; z-index:30; left:50%; right:auto; bottom:0; width:min(100%,480px); transform:translateX(-50%); display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:2px; margin:0; padding:7px 8px calc(7px + env(safe-area-inset-bottom)); border-top:1px solid var(--border); background:color-mix(in srgb,var(--background) 96%,transparent); box-shadow:0 -4px 18px rgb(0 0 0 / 8%); backdrop-filter:blur(16px); }
+    #mgb-app .nav .btn { min-width:0; min-height:52px; padding:7px 2px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; overflow:hidden; }
+    #mgb-app .nav .btn span { width:100%; overflow:hidden; font-size:11px; line-height:14px; text-align:center; text-overflow:ellipsis; white-space:nowrap; }
+    #mgb-app .nav .btn svg { width:19px; height:19px; flex:none; }
     #mgb-app .empty { text-align:center; color:var(--muted-foreground); padding:18px 0; }
     #mgb-app .hidden { display:none; }
     @media(max-width:380px){
-      #mgb-app .grid2, #mgb-app .form-grid, #mgb-app .choice-grid, #mgb-app .stop-fields { grid-template-columns:1fr; }
+      #mgb-app .grid2:not(.quick), #mgb-app .form-grid, #mgb-app .choice-grid, #mgb-app .stop-fields { grid-template-columns:1fr; }
       #mgb-app .wide { grid-column:auto; }
-      #mgb-app .nav .btn span { display:none; }
+      #mgb-app .quick .btn { padding:8px; }
+      #mgb-app .nav .btn span { font-size:10px; }
     }
   </style>
   <section class="shell" aria-label="Приложение Мой грузовой бизнес">
