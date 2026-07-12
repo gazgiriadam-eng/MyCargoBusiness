@@ -84,8 +84,20 @@ final class ApiClient {
             }
             result.put("ok", true);
             result.put("order", order);
-            result.put("distanceKm", Math.round(route.optDouble("distance", 0) / 100.0) / 10.0);
-            result.put("durationHours", Math.round(route.optDouble("duration", 0) / 360.0) / 10.0);
+            double distanceMeters = route.optDouble("distance", 0);
+            double durationSeconds = route.optDouble("duration", 0);
+            JSONObject summary = optimized.optJSONObject("summary");
+            if (summary != null) {
+                if (distanceMeters <= 0) distanceMeters = summary.optDouble("distance", 0);
+                if (durationSeconds <= 0) durationSeconds = summary.optDouble("duration", 0);
+            }
+            if (steps.length() > 0) {
+                JSONObject lastStep = steps.getJSONObject(steps.length() - 1);
+                if (distanceMeters <= 0) distanceMeters = lastStep.optDouble("distance", 0);
+                if (durationSeconds <= 0) durationSeconds = lastStep.optDouble("duration", 0);
+            }
+            result.put("distanceKm", Math.round(distanceMeters / 100.0) / 10.0);
+            result.put("durationHours", Math.round(durationSeconds / 360.0) / 10.0);
         } catch (Exception error) {
             try {
                 result.put("ok", false);
