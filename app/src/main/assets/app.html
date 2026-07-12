@@ -742,8 +742,10 @@ html>body{padding:0;background:var(--background)!important}</style>
   <style>
     #mgb-app { min-height:100vh; min-height:100dvh; color:var(--foreground); background:var(--background); }
     #mgb-app .shell { width:100%; max-width:480px; min-height:100vh; min-height:100dvh; margin:0 auto; }
-    #mgb-app .appbar { position:sticky; top:0; z-index:20; display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:58px; margin:0; padding:calc(8px + env(safe-area-inset-top)) 16px 8px; border-bottom:1px solid var(--border); background:color-mix(in srgb,var(--background) 94%,transparent); backdrop-filter:blur(14px); }
-    #mgb-app .brand { display:flex; align-items:center; gap:9px; font-weight:500; }
+    #mgb-app .appbar { position:sticky; top:0; z-index:1100; display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:58px; margin:0; padding:calc(8px + env(safe-area-inset-top)) 16px 8px; border-bottom:1px solid var(--border); background:color-mix(in srgb,var(--background) 94%,transparent); backdrop-filter:blur(14px); }
+    #mgb-app .brand { appearance:none; display:flex; align-items:center; gap:9px; min-width:0; margin:-6px; padding:8px; border:0; border-radius:var(--radius-lg); color:var(--foreground); background:transparent; font:inherit; font-weight:500; text-align:left; cursor:pointer; }
+    #mgb-app .brand:active { background:var(--accent); }
+    #mgb-app .brand:focus-visible { outline:2px solid var(--ring); outline-offset:2px; }
     #mgb-app #view { width:100%; min-height:0; padding:16px 16px calc(92px + env(safe-area-inset-bottom)); }
     #mgb-app .screen-title { margin:0; font-weight:500; }
     #mgb-app .stack { display:flex; flex-direction:column; gap:10px; }
@@ -784,7 +786,7 @@ html>body{padding:0;background:var(--background)!important}</style>
     #mgb-app .chart .grid { stroke:var(--border); stroke-width:1; }
     #mgb-app .chart text { fill:var(--muted-foreground); }
     #mgb-app .notice { color:var(--muted-foreground); text-align:center; margin-top:10px; }
-    #mgb-app .nav { position:fixed; z-index:30; left:50%; right:auto; bottom:0; width:min(100%,480px); transform:translateX(-50%); display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:2px; margin:0; padding:7px 8px calc(7px + env(safe-area-inset-bottom)); border-top:1px solid var(--border); background:color-mix(in srgb,var(--background) 96%,transparent); box-shadow:0 -4px 18px rgb(0 0 0 / 8%); backdrop-filter:blur(16px); }
+    #mgb-app .nav { position:fixed!important; z-index:1000!important; left:50%; right:auto; bottom:0; width:min(100%,480px); transform:translateX(-50%); display:grid!important; visibility:visible!important; opacity:1!important; grid-template-columns:repeat(5,minmax(0,1fr)); gap:2px; margin:0; padding:7px 8px calc(7px + env(safe-area-inset-bottom)); border-top:1px solid var(--border); background:var(--background); box-shadow:0 -4px 18px rgb(0 0 0 / 12%); }
     #mgb-app .nav .btn { min-width:0; min-height:52px; padding:7px 2px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; overflow:hidden; }
     #mgb-app .nav .btn span { width:100%; overflow:hidden; font-size:11px; line-height:14px; text-align:center; text-overflow:ellipsis; white-space:nowrap; }
     #mgb-app .nav .btn svg { width:19px; height:19px; flex:none; }
@@ -799,7 +801,7 @@ html>body{padding:0;background:var(--background)!important}</style>
   </style>
   <section class="shell" aria-label="Приложение Мой грузовой бизнес">
     <header class="appbar">
-      <div class="brand"><i data-lucide="truck" aria-hidden="true"></i><span>Мой грузовой бизнес</span></div>
+      <button id="homeButton" class="brand" type="button" aria-label="На главный экран"><i data-lucide="truck" aria-hidden="true"></i><span>Мой грузовой бизнес</span></button>
       <button id="settingsButton" class="btn btn-ghost" type="button" aria-label="Настройки"><i data-lucide="settings" aria-hidden="true"></i></button>
     </header>
     <main id="view" aria-live="polite"></main>
@@ -835,6 +837,7 @@ html>body{padding:0;background:var(--background)!important}</style>
       function refreshIcons(){if(window.lucide) window.lucide.createIcons({attrs:{width:16,height:16}});}
       function setScreen(next){screen=next;root.querySelectorAll('.nav-button').forEach(button=>{const active=button.dataset.screen===next;button.classList.toggle('btn-primary',active);button.classList.toggle('btn-ghost',!active);});render();}
       function render(){
+        root.querySelector('.nav').style.display='grid';
         if(screen==='home') renderHome();
         if(screen==='new') renderTypeChoice();
         if(screen==='order') renderOrder();
@@ -930,6 +933,7 @@ html>body{padding:0;background:var(--background)!important}</style>
       function renderSettings(){const s=state.settings;view.innerHTML='<div class="row"><h2 class="screen-title">Настройки</h2><button class="btn btn-ghost" type="button" data-back="more">Назад</button></div><div class="section"><div class="section-head"><strong>Подключение сервисов</strong></div><div class="card form-grid"><label class="form-label wide">Ключ DaData<input id="dadataKey" class="form-control" type="password" autocomplete="off" placeholder="Вставьте ключ"></label><label class="form-label wide">Ключ openrouteservice<input id="orsKey" class="form-control" type="password" autocomplete="off" placeholder="Вставьте ключ"></label><button id="saveKeys" class="btn btn-primary wide" type="button">Сохранить и проверить</button></div><div id="servicesNotice" class="notice text-small">Ключи хранятся только на телефоне</div></div><div class="section"><div class="section-head"><strong>Расчёт рентабельности</strong></div><div class="card form-grid"><label class="form-label">Цена газа, ₽/л<input id="gasPrice" class="form-control" type="number" value="'+s.gasPrice+'"></label><label class="form-label">Расход, л/100 км<input id="consumption" class="form-control" type="number" value="'+s.consumption+'"></label><label class="form-label">Полная стоимость, ₽/км<input id="costKm" class="form-control" type="number" value="'+s.costKm+'"></label><label class="form-label">Налог, %<input id="tax" class="form-control" type="number" value="'+s.tax+'"></label><label class="form-label">Торговаться от, ₽/ч<input id="minHour" class="form-control" type="number" value="'+s.minHour+'"></label><label class="form-label">Брать от, ₽/ч<input id="goodHour" class="form-control" type="number" value="'+s.goodHour+'"></label><button id="saveSettings" class="btn btn-primary wide" type="button">Сохранить настройки</button><button id="resetData" class="btn wide" type="button">Очистить все данные приложения</button></div></div><div id="settingsNotice" class="notice text-small"></div>';view.querySelector('[data-back]').onclick=()=>setScreen('more');view.querySelector('#saveKeys').onclick=()=>{const dadata=view.querySelector('#dadataKey').value;const ors=view.querySelector('#orsKey').value;if(window.AndroidBridge){view.querySelector('#servicesNotice').textContent='Проверяем подключение...';AndroidBridge.saveAndTestKeys(dadata,ors);}else{view.querySelector('#servicesNotice').textContent='Проверка доступна в Android-версии';}};view.querySelector('#saveSettings').onclick=()=>{['gasPrice','consumption','costKm','tax','minHour','goodHour'].forEach(k=>state.settings[k]=Number(view.querySelector('#'+k).value)||0);save();view.querySelector('#settingsNotice').textContent='Настройки сохранены';};view.querySelector('#resetData').onclick=()=>{if(confirm('Удалить заказы, клиентов, автомобиль и обслуживание?')){state=clone(defaults);save();renderSettings();}};}
       window.mgbNativeResult=(type,payload)=>{let data;try{data=JSON.parse(payload);}catch(error){data={ok:false,message:'Некорректный ответ'};}if(type==='services'){const notice=root.querySelector('#servicesNotice');if(notice)notice.textContent=data.message||'Проверка завершена';}if(type==='route'){const order=state.orders.find(item=>Array.isArray(item.stops)&&item.stops.length);if(!order)return;if(!data.ok){const button=root.querySelector('#calculateSequence');if(button)button.textContent=data.message||'Не удалось рассчитать';return;}const byIndex=new Map(order.stops.map((stop,index)=>[index,stop]));order.stops=data.order.map(item=>{const stop=byIndex.get(item.index);stop.accuracy=item.accuracy||'адрес подтверждён';stop.normalized=item.normalized||stop.address;return stop;});order.routeChecked=true;if(data.distanceKm)order.km=data.distanceKm;if(data.durationHours)order.hours=data.durationHours;save();renderRoute();}};
       root.querySelectorAll('.nav-button').forEach(button=>button.onclick=()=>setScreen(button.dataset.screen));
+      root.querySelector('#homeButton').onclick=()=>setScreen('home');
       root.querySelector('#settingsButton').onclick=()=>setScreen('settings');
       render();
     })();
