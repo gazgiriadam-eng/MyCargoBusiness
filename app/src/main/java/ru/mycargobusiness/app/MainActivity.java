@@ -154,14 +154,54 @@ public class MainActivity extends Activity {
         }
 
         @JavascriptInterface
-        public void optimizeRoute(String requestJson) {
+        public void getServiceStatus() {
+            executor.execute(() -> sendResult("serviceStatus", serviceStatus()));
+        }
+
+        @JavascriptInterface
+        public void testSavedKeys() {
             executor.execute(() -> {
                 JSONObject result;
                 try {
                     String dadata = secureStore.get("dadata");
                     String ors = secureStore.get("ors");
                     if (dadata.isEmpty() || ors.isEmpty()) {
+                        result = new JSONObject().put("ok", false).put("message", "Сначала сохраните оба ключа");
+                    } else {
+                        result = apiClient.testServices(dadata, ors);
+                    }
+                } catch (Exception error) {
+                    result = errorResult("Не удалось проверить сохранённые ключи");
+                }
+                sendResult("services", result);
+            });
+        }
+
+        @JavascriptInterface
+        public void deleteServiceKeys() {
+            executor.execute(() -> {
+                secureStore.remove("dadata");
+                secureStore.remove("ors");
+                JSONObject result = serviceStatus();
+                try {
+                    result.put("message", "Ключи удалены с телефона");
+                } catch (Exception ignored) { }
+                sendResult("serviceStatus", result);
+            });
+        }
+
+        @JavascriptInterface
+        public void optimizeRoute(String requestJson) {
+            executor.execute(() -> {
+                JSONObject result;
+                String context = "saved";
+                try {
+                    context = new JSONObject(requestJson).optString("context", "saved");
+                    String dadata = secureStore.get("dadata");
+                    String ors = secureStore.get("ors");
+                    if (dadata.isEmpty() || ors.isEmpty()) {
                         result = new JSONObject()
+                                .put("context", context)
                                 .put("ok", false)
                                 .put("message", "Сначала подключите сервисы в настройках");
                     } else {
@@ -170,11 +210,31 @@ public class MainActivity extends Activity {
                 } catch (Exception error) {
                     result = new JSONObject();
                     try {
-                        result.put("ok", false).put("message", "Не удалось прочитать ключи");
+                        result.put("context", context).put("ok", false).put("message", "Не удалось прочитать ключи");
                     } catch (Exception ignored) { }
                 }
                 sendResult("route", result);
             });
+        }
+
+        private JSONObject serviceStatus() {
+            JSONObject result = new JSONObject();
+            try {
+                boolean dadata = !secureStore.get("dadata").isEmpty();
+                boolean ors = !secureStore.get("ors").isEmpty();
+                result.put("ok", true).put("dadata", dadata).put("ors", ors);
+            } catch (Exception error) {
+                return errorResult("Не удалось прочитать состояние ключей");
+            }
+            return result;
+        }
+
+        private JSONObject errorResult(String message) {
+            JSONObject result = new JSONObject();
+            try {
+                result.put("ok", false).put("message", message);
+            } catch (Exception ignored) { }
+            return result;
         }
     }
 }
