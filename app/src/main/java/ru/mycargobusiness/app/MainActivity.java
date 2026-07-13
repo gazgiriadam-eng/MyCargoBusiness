@@ -1,12 +1,15 @@
 package ru.mycargobusiness.app;
 
 import android.annotation.SuppressLint;
+import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Build;
+import android.content.pm.PackageManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -17,6 +20,12 @@ import org.json.JSONObject;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 public class MainActivity extends Activity {
     private WebView webView;
@@ -61,6 +70,9 @@ public class MainActivity extends Activity {
         });
         setContentView(webView);
         webView.loadUrl("file:///android_asset/app.html");
+        if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1001);
+        }
     }
 
     private void openExternal(Uri uri) {
@@ -85,6 +97,38 @@ public class MainActivity extends Activity {
     }
 
     public final class AndroidBridge {
+        @JavascriptInterface
+        public void cancelReminder(String orderId) {
+            WorkManager.getInstance(MainActivity.this).cancelUniqueWork("order-reminder-" + orderId);
+        }
+
+        @JavascriptInterface
+        public void scheduleReminder(String requestJson) {
+            try {
+                JSONObject request = new JSONObject(requestJson);
+                long orderId = request.getLong("id");
+                long scheduledAt = request.getLong("scheduledAt");
+                int reminderMin = request.optInt("reminderMin", 120);
+                long runAt = scheduledAt - TimeUnit.MINUTES.toMillis(reminderMin);
+                long delay = Math.max(0, runAt - System.currentTimeMillis());
+                Data input = new Data.Builder()
+                        .putLong("orderId", orderId)
+                        .putString("client", request.optString("client", "Клиент"))
+                        .putString("route", request.optString("route", "Предстоящий заказ"))
+                        .build();
+                OneTimeWorkRequest work = new OneTimeWorkRequest.Builder(ReminderWorker.class)
+                        .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                        .setInputData(input)
+                        .build();
+                WorkManager.getInstance(MainActivity.this).enqueueUniqueWork(
+                        "order-reminder-" + orderId,
+                        ExistingWorkPolicy.REPLACE,
+                        work);
+            } catch (Exception error) {
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Не удалось установить напоминание", Toast.LENGTH_LONG).show());
+            }
+        }
+
         @JavascriptInterface
         public void saveAndTestKeys(String dadataKey, String orsKey) {
             executor.execute(() -> {
