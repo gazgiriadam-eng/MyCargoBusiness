@@ -37,8 +37,11 @@ final class ApiClient {
 
     JSONObject optimize(String requestJson, String dadataKey, String orsKey) {
         JSONObject result = new JSONObject();
+        String context = "saved";
         try {
             JSONObject request = new JSONObject(requestJson);
+            context = request.optString("context", "saved");
+            result.put("context", context);
             ResolvedAddress start = resolveAddress(request.getString("loading"), dadataKey);
             if (start == null) throw new IllegalArgumentException("не найден адрес загрузки");
 
@@ -53,7 +56,6 @@ final class ApiClient {
                 resolved.put(originalIndex, address);
                 jobs.put(new JSONObject()
                         .put("id", originalIndex + 1)
-                        .put("service", 420)
                         .put("location", new JSONArray().put(address.lon).put(address.lat)));
             }
 
@@ -100,6 +102,7 @@ final class ApiClient {
             result.put("durationHours", Math.round(durationSeconds / 360.0) / 10.0);
         } catch (Exception error) {
             try {
+                result.put("context", context);
                 result.put("ok", false);
                 result.put("message", "Не удалось рассчитать: " + safeMessage(error));
             } catch (Exception ignored) { }

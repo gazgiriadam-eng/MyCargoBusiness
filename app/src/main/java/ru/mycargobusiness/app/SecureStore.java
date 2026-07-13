@@ -43,6 +43,10 @@ final class SecureStore {
         return new String(cipher.doFinal(encrypted), StandardCharsets.UTF_8);
     }
 
+    void remove(String name) {
+        preferences.edit().remove(name).apply();
+    }
+
     private SecretKey getOrCreateKey() throws Exception {
         KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
         keyStore.load(null);
